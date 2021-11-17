@@ -1,13 +1,6 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
-version: 2.1
-
-orbs:
-  aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@0.12.0
-  aws-ecr: circleci/aws-ecr@7.0.0
-  
 jobs:
   build-environment:
     docker:
@@ -94,7 +87,10 @@ jobs:
     #        get-rollout-status: true
     #        resource-file-path: tests/nginx-deployment/deployment.yaml
     #        resource-name: deployment/nginx-deployment
-          
+orbs:
+  aws-eks: circleci/aws-eks@0.2.3
+  kubernetes: circleci/kubernetes@0.4.0
+version: 2.1          
 workflows:
   default:
     jobs:
