@@ -52,7 +52,7 @@ jobs:
             # build 
             docker build -t app-${CIRCLE_WORKFLOW_ID:0:7}
             # tag
-            docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest 729501865919.dkr.ecr.eu-central-1.amazonaws.com/app:latest
+            docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest alvarezrebeca/app:latest
             # push
             docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
 
