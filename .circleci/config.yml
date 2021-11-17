@@ -56,21 +56,21 @@ jobs:
             # push
             docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
 
-  deploy-eks-cluster:
-      executor: aws-eks/python3
-      parameters:
-        cluster-name:
-          description: |
-            app cluster
-          type: string
-      steps:
-        - kubernetes/install
-        - aws-eks/update-kubeconfig-with-authenticator:
-            cluster-name: << parameters.cluster-name >>
-        - run:
-            command: |
-              kubectl get services
-            name: app cluster
+  #deploy-eks-cluster:
+  #  executor: aws-eks/python3
+  #  parameters:
+  #    cluster-name:
+  #      description: |
+  #        cluster name
+  #      type: string
+  #  steps:
+  #    - kubernetes/install
+  #    - aws-eks/update-kubeconfig-with-authenticator:
+  #        cluster-name: << parameters.cluster-name >>
+  #    - run:
+  #        command: |
+  #          kubectl get services
+  #        name: app cluster
     
     #create-deployment:
     #  executor: aws-eks/python3
