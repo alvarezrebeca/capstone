@@ -63,6 +63,8 @@ jobs:
         description: |
           cluster name
         type: string
+      aws-region:
+        type: string 
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
