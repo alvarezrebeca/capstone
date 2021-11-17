@@ -51,6 +51,8 @@ jobs:
             echo $DOCKER_PASSWORD | docker login --username alvarezrebeca --password-stdin
             # build 
             docker build -t alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} .
+            # push
+            docker push alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7}
             # tag
             docker tag alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} alvarezrebeca/app:latest
             # push
