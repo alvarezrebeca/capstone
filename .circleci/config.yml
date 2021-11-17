@@ -1,6 +1,9 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
+orbs:
+  aws-eks: circleci/aws-eks@0.2.3
+  kubernetes: circleci/kubernetes@0.4.0
 version: 2.1
 
 jobs:
@@ -38,28 +41,59 @@ jobs:
             make lint
             
   build-docker-image:
-    docker:
-      - image: python:3.7.3-stretch
     working_directory: ~/capstone
     steps:
       - checkout
       - run: 
-          name: build image
+          name: build, tag and push image
           command: |
-            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 729501865919.dkr.ecr.eu-central-1.amazonaws.com
+            echo "$DOCKER_PASSWORD | docker login --username alvarezrebeca --password-stdin
+            # build 
             docker build -t app-${CIRCLE_WORKFLOW_ID:0:7}
-      - run:
-          name: tag image
-          command: |
-           docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest 729501865919.dkr.ecr.eu-central-1.amazonaws.com/app:latest
-      - run:
-          name: push image
-          command: |
-           docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
-  
+            # tag
+            docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest 729501865919.dkr.ecr.eu-central-1.amazonaws.com/app:latest
+            # push
+            docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
+
+  deploy-eks-cluster:
+      executor: aws-eks/python3
+      parameters:
+        cluster-name:
+          description: |
+            app cluster
+          type: string
+      steps:
+        - kubernetes/install
+        - aws-eks/update-kubeconfig-with-authenticator:
+            cluster-name: << parameters.cluster-name >>
+        - run:
+            command: |
+              kubectl get services
+            name: app cluster
+    
+    #create-deployment:
+    #  executor: aws-eks/python3
+    #  parameters:
+    #    cluster-name:
+    #      description: |
+    #        app cluster
+    #      type: string
+    #  steps:
+    #    - checkout
+    #    - aws-eks/update-kubeconfig-with-authenticator:
+    #        cluster-name: << parameters.cluster-name >>
+    #        install-kubectl: true
+    #    - kubernetes/create-or-update-resource:
+    #        get-rollout-status: true
+    #        resource-file-path: tests/nginx-deployment/deployment.yaml
+    #        resource-name: deployment/nginx-deployment
+          
+
 workflows:
   default:
     jobs:
       - build-environment
       - build-docker-image:
           requires: [build-environment]
+      - deploy-eks-cluster:
+          requires: [build-docker-image]
