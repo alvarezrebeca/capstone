@@ -96,5 +96,5 @@ workflows:
       - build-environment
       - build-docker-image:
           requires: [build-environment]
-      - deploy-eks-cluster:
-          requires: [build-docker-image]
+      #- deploy-eks-cluster:
+      #    requires: [build-docker-image]
