@@ -131,7 +131,8 @@ workflows:
       - build-environment
       - build-docker-image:
           requires: [build-environment]
-      - create-cluster
+      - create-cluster:
+          cluster-name: eks-cluster-alvarez
       - deploy-eks-cluster:
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
