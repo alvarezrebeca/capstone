@@ -1,11 +1,12 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
+version: 2.1
+
 orbs:
   aws-eks: circleci/aws-eks@0.2.3
   kubernetes: circleci/kubernetes@0.4.0
-version: 2.1
-
+  
 jobs:
   build-environment:
     docker:
@@ -66,6 +67,7 @@ jobs:
       aws-region:
         type: string 
     steps:
+      - checkout
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: << parameters.cluster-name >>
@@ -103,5 +105,6 @@ workflows:
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
       - deploy-eks-cluster:
+          requires: [build-docker-image]
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
