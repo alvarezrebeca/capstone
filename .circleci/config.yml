@@ -54,7 +54,7 @@ jobs:
             # tag
             docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest alvarezrebeca/app:latest
             # push
-            docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
+            docker push alvarezrebeca/app:latest
 
   #deploy-eks-cluster:
   #  executor: aws-eks/python3
