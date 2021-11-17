@@ -1,6 +1,12 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
+version: 2.1
+
+orbs:
+  aws-eks: circleci/aws-eks@1.1.0
+  kubernetes: circleci/kubernetes@0.4.0
+
 jobs:
   build-environment:
     docker:
@@ -50,6 +56,33 @@ jobs:
             docker tag alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} alvarezrebeca/app:latest
             # push
             docker push alvarezrebeca/app:latest
+            
+  create-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+        
+    steps:
+      - run:
+          name: Install the eksctl tool
+          command: |
+            if which eksctl > /dev/null; then
+              echo "eksctl is already installed"
+              exit 0
+            fi
+            mkdir -p eksctl_download
+            curl --silent --location --retry 5 "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+              | tar xz -C eksctl_download
+            chmod +x eksctl_download/eksctl
+            SUDO=""
+            if [ $(id -u) -ne 0 ] && which sudo > /dev/null ; then
+              SUDO="sudo"
+            fi
+            $SUDO mv eksctl_download/eksctl /usr/local/bin/
+            rmdir eksctl_download
 
   deploy-eks-cluster:
     executor: aws-eks/python3
@@ -87,10 +120,7 @@ jobs:
     #        get-rollout-status: true
     #        resource-file-path: tests/nginx-deployment/deployment.yaml
     #        resource-name: deployment/nginx-deployment
-orbs:
-  aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@0.4.0
-version: 2.1          
+
 workflows:
   default:
     jobs:
