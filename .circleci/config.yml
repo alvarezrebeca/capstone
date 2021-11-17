@@ -41,6 +41,7 @@ jobs:
             make lint
             
   build-docker-image:
+    machine: true
     working_directory: ~/capstone
     steps:
       - checkout
