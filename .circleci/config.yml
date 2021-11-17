@@ -38,8 +38,6 @@ jobs:
             make lint
             
   build-docker-image:
-    docker:
-      - image: circleci/aws-ecr@7.0.0
     working_directory: ~/capstone
     steps:
       - checkout
