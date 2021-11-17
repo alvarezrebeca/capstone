@@ -83,6 +83,10 @@ jobs:
             fi
             $SUDO mv eksctl_download/eksctl /usr/local/bin/
             rmdir eksctl_download
+            
+      - aws-eks/create-cluster:
+          cluster-name: eks-cluster-alvarez
+          aws-region: eu-central-1
 
   deploy-eks-cluster:
     executor: aws-eks/python3
@@ -127,8 +131,7 @@ workflows:
       - build-environment
       - build-docker-image:
           requires: [build-environment]
-      - create-cluster:
-          cluster-name: eks-cluster-alvarez
+      - create-cluster
       - deploy-eks-cluster:
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
