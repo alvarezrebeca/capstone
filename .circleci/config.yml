@@ -54,3 +54,10 @@ jobs:
         name: push image
         command: |
           docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
+  
+  workflows:
+  docker:
+      jobs:
+      - build-environment
+      - build-docker-image:
+          requires: [build-environment]
