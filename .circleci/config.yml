@@ -1,7 +1,8 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
-version: 2
+version: 2.1
+
 jobs:
   build-environment:
     docker:
@@ -55,9 +56,9 @@ jobs:
           command: |
            docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
   
-  workflows:
-    default:
-      jobs:
-        - build-environment
-        - build-docker-image:
-            requires: [build-environment]
+workflows:
+  default:
+    jobs:
+      - build-environment
+      - build-docker-image:
+          requires: [build-environment]
