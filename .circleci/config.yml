@@ -58,6 +58,6 @@ jobs:
   workflows:
     docker:
       jobs:
-      - build-environment
-      - build-docker-image:
-          requires: [build-environment]
+        - build-environment
+        - build-docker-image:
+            requires: [build-environment]
