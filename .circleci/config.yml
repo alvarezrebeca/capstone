@@ -50,11 +50,11 @@ jobs:
           command: |
             echo $DOCKER_PASSWORD | docker login --username alvarezrebeca --password-stdin
             # build 
-            docker build -t app-${CIRCLE_WORKFLOW_ID:0:7} .
+            docker build -t alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} .
             # tag
-            docker tag app-${CIRCLE_WORKFLOW_ID:0:7}:latest alvarezrebeca/app:latest
+            docker tag alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} alvarezrebeca/app:latest
             # push
-            docker push app-${CIRCLE_WORKFLOW_ID:0:7}:latest
+            docker push alvarezrebeca/app:latest
 
   #deploy-eks-cluster:
   #  executor: aws-eks/python3
