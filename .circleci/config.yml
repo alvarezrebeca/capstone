@@ -51,28 +51,26 @@ jobs:
             echo $DOCKER_PASSWORD | docker login --username alvarezrebeca --password-stdin
             # build 
             docker build -t alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} .
-            # push
-            docker push alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7}
             # tag
             docker tag alvarezrebeca/app:${CIRCLE_WORKFLOW_ID:0:7} alvarezrebeca/app:latest
             # push
             docker push alvarezrebeca/app:latest
 
-  #deploy-eks-cluster:
-  #  executor: aws-eks/python3
-  #  parameters:
-  #    cluster-name:
-  #      description: |
-  #        cluster name
-  #      type: string
-  #  steps:
-  #    - kubernetes/install
-  #    - aws-eks/update-kubeconfig-with-authenticator:
-  #        cluster-name: << parameters.cluster-name >>
-  #    - run:
-  #        command: |
-  #          kubectl get services
-  #        name: app cluster
+  deploy-eks-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          cluster name
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          command: |
+            kubectl get services
+          name: app cluster
     
     #create-deployment:
     #  executor: aws-eks/python3
@@ -98,5 +96,5 @@ workflows:
       - build-environment
       - build-docker-image:
           requires: [build-environment]
-      #- deploy-eks-cluster:
-      #    requires: [build-docker-image]
+      - deploy-eks-cluster:
+          cluster-name: eks-cluster-alvarez
