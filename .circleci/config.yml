@@ -98,3 +98,4 @@ workflows:
           requires: [build-environment]
       - deploy-eks-cluster:
           cluster-name: eks-cluster-alvarez
+          aws-region: eu-central-1
