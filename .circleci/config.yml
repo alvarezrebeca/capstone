@@ -57,25 +57,25 @@ jobs:
             # push
             docker push alvarezrebeca/app:latest
 
-  #deploy-eks-cluster:
-  #  executor: aws-eks/python3
-  #  parameters:
-  #    cluster-name:
-  #      description: |
-  #        cluster name
-  #      type: string
-  #    aws-region:
-  #      type: string 
-  #  steps:
-  #    - checkout
-  #    - kubernetes/install
-  #    - aws-eks/update-kubeconfig-with-authenticator:
-  #        cluster-name: << parameters.cluster-name >>
-  #        aws-region: eu-central-1
-  #    - run:
-  #        command: |
-  #          kubectl get services
-  #        name: app cluster
+  deploy-eks-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          cluster name
+        type: string
+      aws-region:
+        type: string 
+    steps:
+      - checkout
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          aws-region: eu-central-1
+      - run:
+          command: |
+            kubectl get services
+          name: eks-cluster-alvarez
     
     #create-deployment:
     #  executor: aws-eks/python3
@@ -103,7 +103,8 @@ workflows:
       - aws-eks/create-cluster:
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
-      #- deploy-eks-cluster:
-      #    requires: [build-docker-image]
-      #    cluster-name: eks-cluster-alvarez
-      #    aws-region: eu-central-1
+      - deploy-eks-cluster:
+          cluster-name: eks-cluster-alvarez
+          aws-region: eu-central-1
+          requires:
+            - aws-eks/create-cluster
