@@ -132,5 +132,4 @@ workflows:
       - deploy-eks-cluster:
           cluster-name: eks-cluster-alvarez
           aws-region: eu-central-1
-          requires:
-            - aws-eks/create-cluster
+          requires: [create-cluster]
