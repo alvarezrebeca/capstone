@@ -38,12 +38,15 @@ jobs:
             make lint
             
   build-docker-image:
+    docker:
+      - image: python:3.7.3-stretch
     working_directory: ~/capstone
     steps:
       - checkout
       - run: 
           name: build image
           command: |
+            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 729501865919.dkr.ecr.eu-central-1.amazonaws.com
             docker build -t app-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: tag image
