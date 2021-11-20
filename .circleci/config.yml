@@ -83,7 +83,7 @@ jobs:
             
       - aws-eks/create-cluster:
           cluster-name: eks-cluster-alvarez
-          aws-region: eu-central-1
+          aws-region: $AWS_DEFAULT_REGION
 
   deploy-app-eks:
     executor: aws-eks/python3
@@ -102,7 +102,7 @@ jobs:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: << parameters.cluster-name >>
           install-kubectl: true
-          aws-region: eu-central-1
+          aws-region: $AWS_DEFAULT_REGION
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: "app-deployment.yaml"          
@@ -118,6 +118,37 @@ jobs:
             kubectl get nodes
             kubectl get deployment
             kubectl get pods -o wide
+
+  delete-cluster:
+      executor: aws-eks/python3
+      parameters:
+        cluster-name:
+          description: |
+            Name of the EKS cluster
+          type: string
+      steps:
+        - run:
+            name: Install the eksctl tool
+            command: |
+              if which eksctl > /dev/null; then
+                echo "eksctl is already installed"
+                exit 0
+              fi
+              mkdir -p eksctl_download
+              curl --silent --location --retry 5 "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+                | tar xz -C eksctl_download
+              chmod +x eksctl_download/eksctl
+              SUDO=""
+              if [ $(id -u) -ne 0 ] && which sudo > /dev/null ; then
+                SUDO="sudo"
+              fi
+              $SUDO mv eksctl_download/eksctl /usr/local/bin/
+              rmdir eksctl_download
+              
+        - aws-eks/delete-cluster:
+            cluster-name: eks-cluster-alvarez
+            aws-region: $AWS_DEFAULT_REGION
+            wait: true
 
 workflows:
   default:
@@ -135,5 +166,3 @@ workflows:
       
       #- aws-eks/delete-cluster:
       #    cluster-name: eks-cluster-alvarez
-      #    aws-region: $AWS_DEFAULT_REGION
-      #    wait: true
