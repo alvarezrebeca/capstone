@@ -128,7 +128,7 @@ workflows:
       #- create-cluster:
       #    cluster-name: eks-cluster-alvarez
       - deploy-app-eks:
-          requires: [build-docker-image]
+          requires: [build-and-push-docker-image]
           cluster-name: eks-cluster-alvarez
           aws-region: $AWS_DEFAULT_REGION
       #    requires: [create-cluster]
