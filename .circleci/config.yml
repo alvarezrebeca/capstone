@@ -123,7 +123,7 @@ workflows:
   default:
     jobs:
       - build-environment
-      - build-docker-image:
+      - build-and-push-docker-image:
           requires: [build-environment]
       #- create-cluster:
       #    cluster-name: eks-cluster-alvarez
