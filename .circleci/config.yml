@@ -163,5 +163,5 @@ workflows:
       #    cluster-name: eks-cluster-alvarez
       #    aws-region: $AWS_DEFAULT_REGION
       #    requires: [create-cluster]
-      - aws-eks/delete-cluster:
+      - delete-cluster:
           cluster-name: eks-cluster-alvarez
